@@ -1,0 +1,33 @@
+version: '3.9'
+
+services:
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis:/data
+  
+  mysql:
+    image: mysql:latest
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'pgvins'
+      MYSQL_USER: 'pg'
+      MYSQL_PASSWORD: 'superpassword'
+      MYSQL_ROOT_PASSWORD: 'superpassword'
+    ports:
+      - '3306:3306'
+    volumes:
+      - mysql:/var/lib/mysql
+
+  # rcli:
+  #   image: redis:latest
+  #   links:
+  #     - redis
+  #   command: redis-cli -h redis
+
+
+volumes:
+  mysql:
+  redis:

@@ -1,0 +1,52 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["referentialIntegrity"]
+}
+
+datasource db {
+  provider             = "mysql"
+  url                  = env("DATABASE_URL")
+  referentialIntegrity = "prisma"
+}
+
+model Wine {
+  id          String @id @default(cuid())
+  name        String @unique
+  description String @db.VarChar(255)
+  origin      String
+  price       Float
+}
+
+model User {
+  id        String    @id @default(cuid())
+  email     String    @unique
+  firstName String
+  lastName  String
+  Account   Account[]
+}
+
+model Session {
+  id        String   @id
+  sid       String   @unique
+  data      String?  @db.Text
+  expiresAt DateTime
+}
+
+model Provider {
+  name    String    @id
+  Account Account[]
+}
+
+model Account {
+  id                String   @id @default(cuid())
+  providerAccountId String?  @unique
+  password          String?
+  lastPassword      String?
+  userId            String
+  providerName      String
+  provider          Provider @relation(fields: [providerName], references: [name], onDelete: Cascade)
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([providerName])
+}
